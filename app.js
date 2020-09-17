@@ -2,6 +2,7 @@ const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
+const { prompt } = require('inquirer');
 const path = require("path");
 const fs = require("fs");
 
@@ -13,6 +14,75 @@ const render = require("./lib/htmlRenderer");
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+
+const questionPrompt = [
+
+    {
+        type: "list",
+        name: "begin",
+        message: "Would you like to add a new employee?",
+        choices: [
+            "Yes",
+            "No"
+        ]
+    },
+    {
+        type: "input",
+        name: "name",
+        message: "What is your name?",
+        when: (answers) => answers.begin === "Yes" 
+
+    },
+    {
+        type: "input",
+        name: "email",
+        message: "What is your email?",
+        when: (answers) => answers.name
+    },
+    {
+        type: "input",
+        name: "id",
+        message: "What is your employee ID number?",
+        when: (answers) => answers.email
+    },
+    {
+        type: "list",
+        name: "role",
+        message: "What is your role?",
+        choices: [
+            "Engineer",
+            "Intern",
+            "Manager",
+            "Other"
+        ],
+        when: (answers) => answers.id
+    },
+    {
+        type: "input",
+        name: "github",
+        message: "What is your GitHub username?",
+        when: (answers) => answers.role === "Engineer",
+    },
+    {
+        type: "input",
+        name: "school",
+        message: "Where do you attend school?",
+        when: (answers) => answers.role === "Intern"
+    },
+    {
+        type: "input",
+        name: "officeNumber",
+        message: "What is your office number?",
+        when: (answers) => answers.role === "Manager"
+    }
+]
+
+const team = [];
+
+function teamBuilder() {
+    prompt(questionPrompt);
+}
+teamBuilder();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
