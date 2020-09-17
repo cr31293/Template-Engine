@@ -10,7 +10,9 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const Employee = require("./lib/Employee");
 
+const employees = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
@@ -53,7 +55,6 @@ const questionPrompt = [
             "Engineer",
             "Intern",
             "Manager",
-            "Other"
         ],
         when: (answers) => answers.id
     },
@@ -75,14 +76,40 @@ const questionPrompt = [
         message: "What is your office number?",
         when: (answers) => answers.role === "Manager"
     }
+
 ]
 
-const team = [];
 
 function teamBuilder() {
-    prompt(questionPrompt);
-}
+    prompt(questionPrompt).then(answers => {
+        
+        if (answers.role === "Engineer") {
+            const employee = new Engineer (answers.name, answers.email, answers.id, answers.github);
+            employees.push(employee);
+        } else if (answers.role === "Intern") {
+            const employee = new Intern (answers.name, answers.email, answers.id, answers.school);
+            employees.push(employee);
+
+        } else if (answers.role === "Manager") {
+            const employee = new Manager (answers.name, answers.email, answers.id, answers.officeNumber);
+            employees.push(employee);
+        };
+        console.log(employees);
+
+        if (answers.begin === "Yes"){
+        teamBuilder();
+        };
+        fs.writeFile("Output/team.html", render(employees), function(err) {
+            if (err) throw err;
+        })
+
+    });
+};
+
 teamBuilder();
+
+
+
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
